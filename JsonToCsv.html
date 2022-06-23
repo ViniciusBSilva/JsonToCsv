@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Transform XML and Download</title>
+        <link rel="stylesheet" type="text/css" href="JsonToCsv.css" />
+    </head>
+
+    <body>
+
+        <div class="content">
+
+            <header class="header">
+                <h1>Transform XML and Download</h1>
+            </header>
+
+            <section class="form">
+
+                <form name="config">
+
+                    <div class="form-item form-item-justified ">
+                        <label for="service">Service</label>
+                        <input id="service" name="service" type="text" value="https://jsonplaceholder.typicode.com/"
+                            disabled></input>
+                    </div>
+
+                    <div class="form-item form-item-radio ">
+                        <fieldset>
+                            <legend>Select API</legend>
+
+                            <div class="radioOption">
+                                <input type="radio" name="selectedApi" id="posts" value="posts">
+                                <label for="posts">/posts (100 posts)</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" name="selectedApi" id="comments" value="comments">
+                                <label for="comments">/comments (500 comments)</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" name="selectedApi" id="albums" value="albums">
+                                <label for="albums">/albums (100 albums)</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" name="selectedApi" id="photos" value="photos">
+                                <label for="photos">/photos (5000 photos)</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" name="selectedApi" id="todos" value="todos">
+                                <label for="todos">/todos (200 todos)</label>
+                            </div>
+                            <div class="radioOption">
+                                <input type="radio" name="selectedApi" id="users" value="users">
+                                <label for="users">/users (10 users)</label>
+                            </div>
+                        </fieldset>
+                    </div>
+
+                    <div class="form-item">
+                        <input type="button" value="Download" onclick="download()">
+                    </div>
+                </form>
+
+            </section>
+
+        </div>
+
+        <script src="JsonToCsv.js"></script>
+
+    </body>
+
+</html>

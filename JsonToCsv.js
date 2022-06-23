@@ -69,3 +69,10 @@ function loadXMLDoc(filename) {
     return xhttp.responseXML;
 
 }
+
+
+//============================================================================
+
+function download(){
+    
+}

@@ -40,17 +40,17 @@ function downloadXML(stringContent) {
 
 }
 
-function download( filename, stringContent ) {
-    var element = document.createElement( "a" );
+function download(filename, stringContent) {
+    var element = document.createElement("a");
     element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(stringContent));
     element.setAttribute("download", filename);
 
     element.style.display = "none";
-    document.body.appendChild( element );
+    document.body.appendChild(element);
 
     element.click();
 
-    document.body.removeChild( element );
+    document.body.removeChild(element);
 
 }
 
@@ -73,6 +73,14 @@ function loadXMLDoc(filename) {
 
 //============================================================================
 
-function download(){
-    
+function download() {
+
+    const url = document.config.service.value;
+    const api = document.querySelector('input[name="selectedApi"]:checked').value;
+    const fullUrl = url + api;
+
+    fetch(fullUrl)
+        .then(response => response.json())
+        .then(json => console.log(json));
+
 }

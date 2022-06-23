@@ -81,6 +81,19 @@ function download() {
 
     fetch(fullUrl)
         .then(response => response.json())
-        .then(json => console.log(json));
+        .then(json => console.log(convertToCSV(json)));
 
+
+
+}
+
+function convertToCSV(arr) {
+    const keys = Object.keys(arr[0]);
+    console.log("keys", keys);
+
+    const array = [keys].concat(arr)
+
+    return array.map(it => {
+        return Object.values(it).toString()
+    }).join('\n')
 }

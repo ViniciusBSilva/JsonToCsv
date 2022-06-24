@@ -1,48 +1,19 @@
-function transformAndDownload() {
+function download() {
 
-    const originalXMLPath = document.getElementById("SourceFile").value;
-    const transformXSLPath = document.getElementById("XSLFile").value;
+    const url = document.config.service.value;
+    const api = document.querySelector('input[name="selectedApi"]:checked').value;
+    const fullUrl = url + api;
 
-    const originalXML = loadXMLDoc(originalXMLPath);
-    const transformXSL = loadXMLDoc(transformXSLPath);
-
-    // code for Chrome, Firefox, Opera, etc.
-    if (document.implementation && document.implementation.createDocument) {
-
-        const xsltProcessor = new XSLTProcessor();
-        xsltProcessor.importStylesheet(transformXSL);
-
-        // const resultDocument = xsltProcessor.transformToFragment(originalXML, document);
-        const resultDocument = xsltProcessor.transformToDocument(originalXML);
-
-        const resultString = new XMLSerializer().serializeToString(resultDocument.documentElement);
-
-        const downloadFile = document.getElementById("DownloadFile").checked;
-
-        if (downloadFile) {
-
-            downloadXML(resultString);
-
-        } else {
-            // Test only
-            const elPreview = document.getElementById("Preview").style.display = "";
-            const elResult = document.getElementById("Result").value = resultString;
-        }
-
-    }
+    fetch(fullUrl)
+        .then(response => response.json())
+        .then(json => downloadFile(getFilename(api), convertToCsv(json)));
 
 }
 
-function downloadXML(stringContent) {
+function downloadFile(filename, fileContentString) {
 
-    const targetFilename = document.getElementById("TargetFile").value;
-    download(targetFilename, stringContent);
-
-}
-
-function download(filename, stringContent) {
-    var element = document.createElement("a");
-    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(stringContent));
+    const element = document.createElement("a");;
+    element.setAttribute("href", "data:text/plain;charset=utf-8," + encodeURIComponent(fileContentString));
     element.setAttribute("download", filename);
 
     element.style.display = "none";
@@ -54,38 +25,11 @@ function download(filename, stringContent) {
 
 }
 
-function loadXMLDoc(filename) {
-
-    const xhttp = new XMLHttpRequest();
-    xhttp.open("GET", filename, false);
-
-    try {
-        xhttp.resposeType = "msxml-document";
-    } catch (err) {
-
-    }
-
-    xhttp.send("");
-    return xhttp.responseXML;
-
+function getFilename(param) {
+    return param + ".csv";
 }
 
-
-//============================================================================
-
-function download() {
-
-    const url = document.config.service.value;
-    const api = document.querySelector('input[name="selectedApi"]:checked').value;
-    const fullUrl = url + api;
-
-    fetch(fullUrl)
-        .then(response => response.json())
-        .then(json => console.log(convertToCSV(json)));
-
-}
-
-function convertToCSV(json) {
+function convertToCsv(json) {
 
     // Create an array from the JSON string (or just use it if it's already an array)
     const jsonArray = Array.isArray(json) ? json : [json];
@@ -108,10 +52,10 @@ function convertToCSV(json) {
 }
 
 /* 
-* Parameter readKeys ->  toogle read keys / read values 
-* false = read ONLY values  (DEFAULT) 
-* true = read ONLY keys
-*/
+ * Parameter readKeys ->  toogle read keys / read values 
+ * false = read ONLY values  (DEFAULT) 
+ * true = read ONLY keys
+ */
 function readJson(object, readKeys = false) {
 
     const elements = [];
@@ -125,13 +69,22 @@ function readJson(object, readKeys = false) {
          */
         if (typeof object[property] === "object") {
             // spread so this function won't return nested arrays
-            elements.push(...readJson(object[property]));
+            elements.push(...readJson(object[property], readKeys));
         } else {
-            readKeys ? elements.push(property) : elements.push(object[property]);
+            // readKeys ? elements.push(handleCsvValue(property)) : elements.push(handleCsvValue(object[property]));
+            elements.push(handleCsvValue(readKeys ? property : object[property]));
         }
 
     }
 
     return elements;
 
+}
+
+function handleCsvValue(csvValue) {
+    if (typeof csvValue === "string") {
+        return csvValue.indexOf(",") >= 0 ? `"${csvValue}"` : csvValue;
+    } else {
+        return csvValue;
+    }
 }

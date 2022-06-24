@@ -1,4 +1,4 @@
-const json = [{
+const example = [{
     "id": 1,
     "name": "Leanne Graham",
     "username": "Bret",
@@ -44,42 +44,68 @@ const json = [{
     }
 }];
 
+convertToCSV(example);
 
-convertToCSV(json);
+function convertToCSV(json) {
 
-function readObject(object) {
+    // Create an array from the JSON string (or just use it if it's already an array)
+    const jsonArray = Array.isArray(json) ? json : [json];
 
+    // Iterate recursively through the keys of the first line of the JSON to get nested keys and use all as header
+    const jsonKeys = readKeys(jsonArray[0]);
+
+    // Iterate recursively through the JSON elements to get nested values
+    const jsonValues = [];
+    jsonArray.forEach(item => {
+        jsonValues.push(readValues(item))
+    });
+
+    // Concat results
+    const resultArray = [].concat([jsonKeys], jsonValues);
+
+    // Return results with each line (item) separated by "\n"
+    return resultArray.join("\n");
+
+}
+
+function readValues(object) {
+
+    const values = [];
+
+    // iterate through every property
     for (property in object) {
 
+        /* If value is an object it means it's a nested property.
+        *  In that case this function must be called again in order to 
+        *  iterate through the nested properties and get back
+        */
         if (typeof object[property] === "object") {
-            readObject(object[property]);
+            // spread so this function won't return nested arrays
+            values.push(...readValues(object[property]));   
         } else {
-            console.log(`property Type = ${typeof property} | value = `, property);
-            // console.log(`object[property] Type = ${typeof object[property]} | value =`, object[property]);
+            values.push(object[property]);
         }
 
     }
 
+    return values;
+
 }
 
-function convertToCSV(json) {
+function readKeys(object) {
 
-    readObject(json);
+    const keys = [];
 
-    const keys = Object.keys(json);
-    // console.log(keys);
+    for (property in object) {
 
-    const array = [keys].concat(json)
-    // console.log("array", array);
+        if (typeof object[property] === "object") {
+            keys.push(...readKeys(object[property]));
+        } else {
+            keys.push(property);
+        }
 
-    // console.log("=================================================================")
-    return array.map(it => {
-        // console.log("it", it);
-        const values = Object.values(it)
-        // console.log("values", values);
-        const string = values.toString();
-        // console.log("string", string);
-        return string;
-        // return Object.values(it).toString()
-    }).join('\n')
+    }
+
+    return keys;
+
 }
